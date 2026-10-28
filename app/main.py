@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.database import Base, engine, get_db
 from app.models import Task
-from app.schemas import TaskCreate, TaskOut, TaskUpdate
+from app.schemas import TaskCreate, TaskOut, TaskUpdate, StudentCreate
 
 # FastAPI объект с настройками
 app = FastAPI(
@@ -68,3 +68,16 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     return db.query(Task).all()
 
 # Со следующей строки добавляйте эндпоинты для students
+@app.post("/create_maria", status_code=201)
+def create_maria(payload: StudentCreate):
+    student = payload.model_dump()
+    STUDENTS.append(student)
+    return student
+
+
+@app.get("/get_maria")
+def get_ivan():
+    for student in STUDENTS:
+        if student["first_name"].lower() == "maria":
+            return student
+    raise HTTPException(status_code=404, detail="Студент не найден")
