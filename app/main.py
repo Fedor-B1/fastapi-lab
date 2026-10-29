@@ -67,6 +67,20 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     db.commit()
     return db.query(Task).all()
 
+from pydantic import BaseModel
+
+class StudentCreate(BaseModel):
+    name: str
+    age: int = 20
+
+
+@app.post("/students", status_code=201)
+def create_liza(payload: StudentCreate):
+    student = {
+        "id": len(STUDENTS) + 1,
+        "name": payload.name,
+        "age": payload.age
+    }
 # Со следующей строки добавляйте эндпоинты для students
 @app.post("/create_maria", status_code=201)
 def create_maria(payload: StudentCreate):
@@ -79,5 +93,13 @@ def create_maria(payload: StudentCreate):
 def get_ivan():
     for student in STUDENTS:
         if student["first_name"].lower() == "maria":
+            return student
+    raise HTTPException(status_code=404, detail="Студент не найден")
+
+
+@app.get("/students/{student_name}")
+def get_student(student_name: str):
+    for student in STUDENTS:
+        if student["name"] == student_name:
             return student
     raise HTTPException(status_code=404, detail="Студент не найден")
