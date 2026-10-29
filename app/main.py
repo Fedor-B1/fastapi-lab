@@ -82,6 +82,19 @@ def create_liza(payload: StudentCreate):
         "age": payload.age
     }
 # Со следующей строки добавляйте эндпоинты для students
+@app.post("/create_maria", status_code=201)
+def create_maria(payload: StudentCreate):
+    student = payload.model_dump()
+    STUDENTS.append(student)
+    return student
+
+
+@app.get("/get_maria")
+def get_ivan():
+    for student in STUDENTS:
+        if student["first_name"].lower() == "maria":
+            return student
+    raise HTTPException(status_code=404, detail="Студент не найден")
 
 
 @app.get("/students/{student_name}")
