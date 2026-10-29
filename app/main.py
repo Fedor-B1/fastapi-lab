@@ -83,13 +83,10 @@ def create_liza(payload: StudentCreate):
     }
 # Со следующей строки добавляйте эндпоинты для students
 
-@app.post("/students", status_code=201) #Добавление студента в список
-def create_student(student: dict):
-    STUDENTS.append(student)
-    return {
-        "student": student
-    }
 
-@app.get("/students") #Получение списка студентов
-def get_students():
-    return STUDENTS
+@app.get("/students/{student_name}")
+def get_student(student_name: str):
+    for student in STUDENTS:
+        if student["name"] == student_name:
+            return student
+    raise HTTPException(status_code=404, detail="Студент не найден")
